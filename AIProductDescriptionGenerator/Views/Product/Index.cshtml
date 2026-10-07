@@ -1,0 +1,130 @@
+﻿@model ProductAiDemo.Models.ProductDescriptionViewModel
+
+@{
+    ViewData["Title"] = "AI Product Description Generator";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="text-center mb-5">
+                <span class="badge text-bg-primary mb-3">
+                    .NET + AI
+                </span>
+
+                <h1 class="display-5 fw-bold">
+                    AI Product Description Generator
+                </h1>
+
+                <p class="lead text-muted">
+                    Generate a professional product description using
+                    ASP.NET Core MVC and local AI.
+                </p>
+            </div>
+
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-body p-4 p-lg-5">
+
+                    <form asp-action="Generate"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-4">
+                            <label asp-for="ProductName"
+                                   class="form-label fw-semibold">
+                                Product Name
+                            </label>
+
+                            <input asp-for="ProductName"
+                                   class="form-control form-control-lg"
+                                   placeholder="e.g. Wireless Headphones" />
+
+                            <span asp-validation-for="ProductName"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Category"
+                                   class="form-label fw-semibold">
+                                Category
+                            </label>
+
+                            <input asp-for="Category"
+                                   class="form-control form-control-lg"
+                                   placeholder="e.g. Electronics" />
+
+                            <span asp-validation-for="Category"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Features"
+                                   class="form-label fw-semibold">
+                                Features
+                            </label>
+
+                            <textarea asp-for="Features"
+                                      class="form-control"
+                                      rows="5"
+                                      placeholder="Noise cancellation, Bluetooth 5, 30-hour battery..."></textarea>
+
+                            <span asp-validation-for="Features"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-primary btn-lg w-100">
+                            @* <i class="bi bi-stars me-2"></i> *@
+
+                            Generate with AI ✨
+                        </button>
+
+                    </form>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+                    {
+                        <div class="alert alert-danger mt-4">
+                            @Model.ErrorMessage
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(Model.GeneratedDescription))
+                    {
+                        <div class="mt-5">
+
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <i class="bi bi-magic text-primary fs-4"></i>
+
+                                <h4 class="mb-0">
+                                    Generated Description
+                                </h4>
+                            </div>
+
+                            <div class="generated-result">
+                                @Model.GeneratedDescription
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    ASP.NET Core MVC → Service → IChatClient → Ollama → AI Model
+                </small>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
