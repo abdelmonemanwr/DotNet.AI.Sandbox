@@ -21,9 +21,7 @@ public class ProductController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Generate(
-        ProductDescriptionViewModel model,
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> Generate(ProductDescriptionViewModel model, CancellationToken ct)
     {
         if (!ModelState.IsValid)
         {
@@ -32,15 +30,11 @@ public class ProductController : Controller
 
         try
         {
-            model.GeneratedDescription =
-                await _productAiService.GenerateDescriptionAsync(
-                    model,
-                    cancellationToken);
+            model.GeneratedDescription = await _productAiService.GenerateDescriptionAsync(model, ct);
         }
         catch (Exception)
         {
-            model.ErrorMessage =
-                "Unable to connect to the AI service. Make sure Ollama is running.";
+            model.ErrorMessage = "Unable to connect to the AI service. Make sure Ollama is running.";
         }
 
         return View("Index", model);
