@@ -1,26 +1,52 @@
-﻿using Microsoft.Extensions.AI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.AI;
 
-namespace DotNet.AI.Sandbox
+namespace DotNet.AI.Sandbox;
+
+internal class AiChatAssistant
 {
-    internal class TEST
+    private readonly IChatClient _chatClient;
+
+    public AiChatAssistant(IChatClient chatClient)
     {
-        private readonly IChatClient chatClient;
+        _chatClient = chatClient;
+    }
 
-        public TEST(IChatClient chatClient)
+    /// <summary>
+    /// Starts an interactive chat loop with the LLM model until the user types 'exit'.
+    /// </summary>
+    public async Task StartInteractiveSessionAsync(CancellationToken cancellationToken = default)
+    {
+        Console.WriteLine("==================================================");
+        Console.WriteLine("🤖 AI Interactive Assistant (Type 'exit' to quit) ");
+        Console.WriteLine("==================================================\n");
+
+        while (!cancellationToken.IsCancellationRequested)
         {
-            this.chatClient = chatClient;
-        }
+            Console.Write("You: ");
+            var userInput = Console.ReadLine();
 
-        public async Task TellMeJoke()
-        {
-            var chatCompletion = await chatClient.GetResponseAsync("TELL ME FUNNY JOKE");
+            // Exit condition check
+            if (string.IsNullOrWhiteSpace(userInput) || userInput.Equals("exit", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("AI: Goodbye!");
+                break;
+            }
 
-            Console.WriteLine(chatCompletion.Message.Text);
+            Console.Write("AI: ");
+
+            try
+            {
+                // Send request to the underlying chat client
+                var response = await _chatClient.GetResponseAsync(userInput, cancellationToken: cancellationToken);
+
+                Console.WriteLine(response.Text);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Error]: {ex.Message}");
+            }
+
+            Console.WriteLine();
         }
     }
 }
