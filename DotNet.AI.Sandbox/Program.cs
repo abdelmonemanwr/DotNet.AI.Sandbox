@@ -1,22 +1,29 @@
-﻿using Microsoft.Extensions.AI;
+﻿using OllamaSharp;
+using DotNet.AI.Sandbox;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 
-internal class Program
-{
-    private static async Task Main(string[] args)
-    {
-        var builder = Host.CreateApplicationBuilder();
+var builder = Host.CreateApplicationBuilder(args);
 
-        var innerClient = new OllamaChatClient(endpoint: new Uri("http://localhost:11434"), modelId: "qwen2.5:0.5b");
+// Configure logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
-        builder.Services.AddChatClient(innerClient);
-        
-        var app = builder.Build();
+// Register ChatClient implementation
+builder.Services.AddChatClient(
+    new OllamaChatClient(
+        endpoint: new Uri("http://localhost:11434"), 
+        modelId: "qwen2.5:0.5b"
+    )
+);
 
-        var chatClient = app.Services.GetRequiredService<IChatClient>();
+// Register the general AI assistant
+builder.Services.AddTransient<AiChatAssistant>();
 
-        var chatCompletion = await chatClient.GetResponseAsync("TELL ME FUNNY JOKE");
-        Console.WriteLine(chatCompletion.Message.Text);
-    }
-}
+var app = builder.Build();
+
+// Resolve service and start the conversation
+var assistant = app.Services.GetRequiredService<AiChatAssistant>();
+await assistant.StartInteractiveSessionAsync();
