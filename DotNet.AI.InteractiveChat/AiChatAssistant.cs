@@ -17,7 +17,7 @@ internal class AiChatAssistant
     public async Task StartInteractiveSessionAsync(CancellationToken cancellationToken = default)
     {
         Console.WriteLine("==================================================");
-        Console.WriteLine("🤖 AI Interactive Assistant (Type 'exit' to quit) ");
+        Console.WriteLine("> AI Interactive Assistant (Type 'exit' to quit) ");
         Console.WriteLine("==================================================\n");
 
         while (!cancellationToken.IsCancellationRequested)
@@ -39,7 +39,7 @@ internal class AiChatAssistant
                 // Send request to the underlying chat client
                 var response = await _chatClient.GetResponseAsync(userInput, cancellationToken: cancellationToken);
 
-                Console.WriteLine(response.Text);
+                Console.WriteLine(response.Message.Text);
             }
             catch (Exception ex)
             {

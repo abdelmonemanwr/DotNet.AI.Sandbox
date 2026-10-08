@@ -1,5 +1,4 @@
-﻿using OllamaSharp;
-using DotNet.AI.Sandbox;
+﻿using DotNet.AI.Sandbox;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
